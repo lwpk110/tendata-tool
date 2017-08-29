@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/batch 
+        http://www.springframework.org/schema/batch/spring-batch.xsd
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+    
+    <import resource="configuration/northamericaImports-common.xml"/>
+    
+    <job id="northamericaImportsCompositeHdfsStoreJob" xmlns="http://www.springframework.org/schema/batch">
+        <step id="northamericaImportsCompositeHdfsStoreStep1" next="northamericaImportsCompositeHdfsStoreStep2">
+            <tasklet>
+                <chunk reader="aggregateItemReader" processor="aggregateItemProcessor" writer="compositeItemWriter" 
+                    commit-interval="${batch.northamerica_imports.commit-interval:1000}" 
+                    skip-limit="${batch.northamerica_imports.skip-limit:1}">
+                    <skippable-exception-classes>
+                        <include class="org.springframework.batch.item.file.FlatFileParseException"/>
+                    </skippable-exception-classes>
+                    <streams>
+                        <stream ref="fileItemReader"/>
+                    </streams>
+                </chunk>
+            </tasklet>
+        </step>
+        <step id="northamericaImportsCompositeHdfsStoreStep2" next="northamericaImportsCompositeHdfsStoreStep3">
+            <tasklet ref="avroLocalFileToHdfsTasklet" />
+        </step>
+        <step id="northamericaImportsCompositeHdfsStoreStep3">
+            <tasklet ref="avroParquetLocalFileToHdfsTasklet" />
+        </step>
+        <listeners>
+            <listener ref="notificationExecutionsListener"/>
+        </listeners>
+    </job>
+    
+    <bean id="compositeItemWriter" class="org.springframework.batch.item.support.CompositeItemWriter">
+        <property name="delegates">
+            <list>
+                <ref bean="avroFileItemWriter"/>
+                <ref bean="avroParquetFileItemWriter"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="avroFileItemWriter" class="cn.tendata.batch.item.file.avro.GenericAvroFileItemWriter" scope="step">
+        <property name="schema" 
+            value="${batch.northamerica_imports.avro.schema:classpath:northamerica/imports/schema.avsc}"/>
+        <property name="resource" 
+            value="#{T(cn.tendata.batch.util.JobParameterUtils).getOutputPathToFile(jobParameters, '.avro')}" />
+    </bean>
+    
+    <bean id="avroLocalFileToHdfsTasklet" class="cn.tendata.batch.northamerica.item.data.hadoop.LocalFileToHdfsTasklet" scope="step">
+        <property name="localSourceFile" 
+            value="#{T(cn.tendata.batch.util.JobParameterUtils).getOutputPathToFile(jobParameters, '.avro')}"/>
+        <property name="rootDir" 
+            value="${batch.northamerica_imports.avro.hdfs.path:/user/tendata/data/original/customs/imports/northamerica/avro}"/>
+        <property name="fsh" ref="hadoopFsShell" />
+    </bean>
+    
+    <bean id="avroParquetFileItemWriter" class="cn.tendata.batch.item.file.avro.parquet.GenericAvroParquetFileItemWriter" scope="step">
+        <property name="schema" 
+            value="${batch.northamerica_imports.avro.schema:classpath:northamerica/imports/schema.avsc}"/>
+        <property name="resource" 
+            value="#{T(cn.tendata.batch.util.JobParameterUtils).getOutputPathToFile(jobParameters, '.parquet')}" />
+    </bean>
+    
+    <bean id="avroParquetLocalFileToHdfsTasklet" class="cn.tendata.batch.northamerica.item.data.hadoop.LocalFileToHdfsTasklet" scope="step">
+        <property name="localSourceFile" 
+            value="#{T(cn.tendata.batch.util.JobParameterUtils).getOutputPathToFile(jobParameters, '.parquet')}"/>
+        <property name="rootDir" 
+            value="${batch.northamerica_imports.avro.parquet.hdfs.path:/user/tendata/data/original/customs/imports/northamerica/parquet}"/>
+        <property name="fsh" ref="hadoopFsShell" />
+        <property name="checkCrc" value="true" />
+    </bean>
+</beans>

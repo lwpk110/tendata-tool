@@ -1,0 +1,159 @@
+##################################################
+#Data field
+#
+- name: date
+  type: DATETIME
+  patterns: "yyyyMMdd"
+  sources: [ActualArrivalDate_10]
+#  
+- name: shipper
+  type: STR
+  expression: "#root['ShipperName_30']?:(null==#root.parent?'':#root.parent['ShipperName_30'])"
+#
+- name: shipperAddrs
+  type: STR
+  sources: 
+    - [ShipperAddressLine1_30]
+    - [ShipperAddressLine2_30]
+    - [ShipperAddressLine3_30]
+    - [ShipperAddressLine4_30]
+#
+- name: consignee
+  type: STR
+  expression: "#root['ConsigneeName_40']?:(null==#root.parent?'':#root.parent['ConsigneeName_40'])"
+  sources: [ConsigneeName_40]
+#
+- name: consigneeAddrs
+  type: STR
+  sources: 
+    - [ConsigneeAddressLine1_40]
+    - [ConsigneeAddressLine2_40]
+    - [ConsigneeAddressLine3_40]
+    - [ConsigneeAddressLine4_40]
+#
+- name: npName
+  type: STR
+  expression: "null == #root['NotifyPartyName_50']?'':T(java.lang.String).join(';',#root['NotifyPartyName_50'])"
+#
+- name: npAddrs
+  type: STR
+  sources: 
+    - [NotifyPartyAddressLine1_50]
+    - [NotifyPartyAddressLine2_50]
+    - [NotifyPartyAddressLine3_50]
+    - [NotifyPartyAddressLine4_50]
+#
+- name: blNo
+  type: STR
+  sources: [HouseBOLNumber_00]
+#
+- name: wt
+  type: FLOAT
+  expression: "T(cn.tendata.batch.northamerica.util.Functions).normalizeWeight(#root['Weight_10'], #root['WeightUnit_10'])"
+#  
+- name: wtU
+  type: STR
+  defaultValue: 'KG'
+#  
+- name: teu
+  type: FLOAT
+  expression: "T(cn.tendata.batch.northamerica.util.Functions).calculateTeu(#root.?[key matches 'ContainerNumber_\\d+_20'],#root.?[key matches 'ContainerLength_\\d+_20'])"
+#
+- name: POE
+  type: STR
+  expression: "@embarkationPortMap[#root['ForeignPortOfLading_10']]?.get('port')"
+#
+- name: POA
+  type: STR
+  expression: "@arrivalPortMap[#root['PortOfUnlading_10']]?.get('port')"
+#  
+- name: pieces
+  type: FLOAT
+  sources: [ManifestQuantity_10]
+#  
+- name: piecesU
+  type: STR
+  sources: [ManifestUnit_10]
+#
+- name: measure
+  type: FLOAT
+  sources: [Measurement_10]
+#
+- name: measureU
+  type: STR
+  sources: [MeasurementUnit_10]
+#  
+- name: origin
+  type: STR
+  expression: "@embarkationPortMap[#root['ForeignPortOfLading_10']]?.get('origin')"
+#  
+- name: vessel
+  type: STR
+  sources: [VesselName_10]
+#
+- name: goodsDesc
+  type: STR
+  expression: "T(cn.tendata.batch.northamerica.util.Functions).aggregateGoodsDescription(#root['ContainerNumber_60'],#root['DescriptionSequenceNumber_60'],#root['DescriptionText_60'],
+  #root['ContainerNumber_62'],#root['DescriptionSequenceNumber_62'],#root['AdditionalDescriptionText_62'])"
+#
+- name: marks
+  type: STR
+  expression: "T(cn.tendata.batch.northamerica.util.Functions).aggregateMarks(#root['ContainerNumber_80'],#root['MarksAndNumbers_80'])"
+#
+- name: carrierSim
+  type: STR
+  sources: [CarrierCode_10]
+#
+- name: voyage
+  type: STR
+  sources: [VoyageNumber_00]
+#
+- name: preCarrier
+  type: STR
+  sources: [PlaceOfReceipt_10]
+#
+- name: inBondCode
+  type: STR
+  sources: [InBondEntryType_10]
+#
+- name: transportMode
+  type: STR
+  expression: "#root['ModeOfTransportation_10'] == '10' ? 'Vessel, non-container' : 'Vessel, containerized'"
+#
+- name: hsCode
+  type: STR
+  expression: "T(cn.tendata.batch.northamerica.util.Functions).aggregateMultiNoRepeatString(#root.?[key matches 'HarmonizedNumber_\\d+_61'])"
+##################################################
+# add new in 2016
+- name: mblNo
+  type: STR
+  sources: [MasterBOLNumber_00]
+#
+- name: containerNo
+  type: STR
+  expression: "T(cn.tendata.batch.northamerica.util.Functions).aggregateMultiNoRepeatString(#root.?[key matches 'ContainerNumber_\\d+_20'])"
+#
+- name: lgsShipper
+  type: STR
+  expression: "#root.parent?.get('ShipperName_30')"
+#
+- name: lgsConsignee
+  type: STR
+  expression: "#root.parent?.get('ConsigneeName_40')"
+#
+- name: sNotifyPartyName
+  type: STR
+  sources: [SecondaryNotifyParty1_10]
+#
+- name: sealNo
+  type: STR
+  expression: "T(cn.tendata.batch.northamerica.util.Functions).aggregateSealNo(#root.?[key matches 'SealNumber\\d+_\\d+_20'])"
+# add new in 2017
+- name: containerInfo
+  type: STR
+  expression: "T(cn.tendata.batch.northamerica.util.Functions).aggregateContainerInfo(#root.?[key matches 'ContainerNumber_\\d+_20'],#root.?[key matches 'ContainerLength_\\d+_20'],#root.?[key matches 'SealNumber1_\\d+_20'],#root.?[key matches 'SealNumber2_\\d+_20'])"
+#
+- name: hasHazmat
+  type: STR
+  expression: "null != #root['ContainerNumber_70'] ? '1' : '0'"
+...

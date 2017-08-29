@@ -1,0 +1,12 @@
+description = "tendata-batch-hadoop"
+
+dependencies {
+    compile "org.springframework.batch:spring-batch-infrastructure"
+    compile "org.apache.parquet:parquet-avro:${parquetVersion}"
+    compile "org.apache.hadoop:hadoop-common:${hadoopVersion}"
+
+    testCompile "junit:junit"
+    testCompile "org.mockito:mockito-core"
+    testCompile "org.hamcrest:hamcrest-all"
+    testCompile "org.springframework:spring-test"
+}

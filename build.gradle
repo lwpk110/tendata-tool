@@ -1,0 +1,58 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath(
+                'io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE',
+                'org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:1.2.0'
+        )
+    }
+}
+
+allprojects {
+    apply plugin: 'idea'
+    apply plugin: 'eclipse'
+}
+
+subprojects {
+	apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.unbroken-dome.test-sets'
+    
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    
+    dependencyManagement {
+        imports {
+            mavenBom "io.spring.platform:platform-bom:${platformBomVersion}"
+        }
+    }
+    
+    tasks.withType(JavaCompile) { options.encoding = "UTF-8" }
+    
+    repositories {
+        mavenLocal()
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        mavenCentral()
+    }
+    
+    testSets {
+        integrationTest { dirName = 'integration-test' }
+    }
+ 
+    project.integrationTest {
+        outputs.upToDateWhen { false }
+    }
+ 
+    check.dependsOn integrationTest
+    integrationTest.mustRunAfter test
+ 
+    tasks.withType(Test) {
+        reports.html.destination = file("${reporting.baseDir}/${name}")
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.10'
+}

@@ -1,0 +1,35 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.3.7.RELEASE'
+    }
+}
+
+apply plugin: 'spring-boot'
+
+springBoot {
+    executable = true
+}
+
+description = 'tendata-batch-admin'
+
+dependencies {
+    compile project(':tendata-batch-integration')
+    compile project(':tendata-batch-northamerica')
+    compile project(':tendata-batch-webpower')
+
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "org.springframework.boot:spring-boot-configuration-processor"
+    compile("org.springframework.batch:spring-batch-admin-manager:${springBatchAdminVersion}"){
+        exclude module: "slf4j-api"
+        exclude module: "slf4j-log4j12"
+    }
+    compile "org.springframework.data:spring-data-hadoop-boot:${springDataHadoopVersion}"
+	
+	runtime "org.hsqldb:hsqldb"
+    runtime "mysql:mysql-connector-java"
+
+    testCompile "org.springframework.boot:spring-boot-starter-test"
+}

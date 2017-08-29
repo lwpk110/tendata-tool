@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/batch 
+        http://www.springframework.org/schema/batch/spring-batch.xsd
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/task 
+        http://www.springframework.org/schema/task/spring-task.xsd">
+    
+    <context:annotation-config/>
+    
+    <task:executor id="taskExecutor" pool-size="100"/>
+    
+    <job id="job1" xmlns="http://www.springframework.org/schema/batch">
+        <step id="job1Step">
+            <tasklet task-executor="taskExecutor" throttle-limit="15">
+                <chunk reader="reader" writer="writer" commit-interval="1" />
+            </tasklet>
+        </step>
+        <listeners>
+            <listener ref="notificationExecutionsListener"/>
+        </listeners>
+    </job>
+    
+    <bean id="reader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+        <property name="resource" 
+            value="#{T(cn.tendata.batch.util.JobParameterUtils).getInputPathToFile(jobParameters)}" />
+        <property name="lineMapper">
+            <bean class="org.springframework.batch.item.file.mapping.PassThroughLineMapper" />
+        </property>
+    </bean>
+    
+    <bean id="writer" class="org.springframework.batch.item.file.FlatFileItemWriter" scope="step">
+        <property name="resource" 
+            value="#{T(cn.tendata.batch.util.JobParameterUtils).getOutputPathToFile(jobParameters, '.txt')}" />
+        <property name="lineAggregator">
+            <bean class="org.springframework.batch.item.file.transform.PassThroughLineAggregator" />
+        </property>
+    </bean>
+</beans>

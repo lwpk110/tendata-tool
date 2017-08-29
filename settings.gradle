@@ -1,0 +1,9 @@
+rootProject.name = 'tendata-batch'
+
+include 'tendata-batch-common'
+include 'tendata-batch-hadoop'
+include 'tendata-batch-integration'
+include 'tendata-batch-northamerica'
+include 'tendata-batch-admin'
+include 'tendata-batch-webpower'
+

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/batch 
+        http://www.springframework.org/schema/batch/spring-batch.xsd
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+    
+    <bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor">
+        <property name="concurrencyLimit" value="${batch.northamerica_imports.task-executor.concurrency-limit:10}"/>
+    </bean>
+    
+    <job id="northamericaImportsMongoMapResultJob" xmlns="http://www.springframework.org/schema/batch">
+        <step id="northamericaImportsMongoMapResultStep1">
+            <tasklet>
+                <chunk reader="reader" processor="asyncItemProcessor" writer="asyncItemWriter" 
+                    commit-interval="${batch.northamerica_imports.mongodb.commit-interval:1000}" />
+            </tasklet>
+        </step>
+    </job>
+    
+    <bean id="reader" class="cn.tendata.batch.northamerica.item.data.MongoCursorItemReader" scope="step">
+        <property name="mongoDbFactory" ref="mongoDbFactory"/>
+        <property name="collectionName" value="#{jobParameters['sourceCollection'] ?: 'northamerica_imports_gn'}" />
+        <property name="dbObjectConverter">
+            <bean class="cn.tendata.batch.northamerica.item.data.PassthroughDbObjectConverter" />
+        </property>
+        <property name="refDbObject" 
+            value="#{T(com.mongodb.util.JSON).parse(
+                T(cn.tendata.batch.northamerica.item.data.MongoQueryUtils).createQuery(jobParameters))}"/>
+    </bean>
+    
+    <bean id="asyncItemProcessor" class="org.springframework.batch.integration.async.AsyncItemProcessor">
+        <property name="delegate" ref="processor"/>
+        <property name="taskExecutor" ref="taskExecutor" />
+    </bean>
+    
+    <bean id="processor" class="cn.tendata.batch.northamerica.item.ShipmentItemProcessor">
+        <property name="shipmentResolver" ref="mongoShipmentResolver"/>
+        <property name="resultMapper" ref="mappingFieldResultMapper"/>
+    </bean>
+    
+    <bean id="mongoShipmentResolver" class="cn.tendata.batch.northamerica.item.data.MongoShipmentResolver" scope="step">
+        <property name="template" ref="mongoTemplate"/>
+        <property name="query" value="{ MasterBOLNumber_00 : ?0 }"/>
+        <property name="targetType" value="java.util.LinkedHashMap"/>
+        <property name="collection" value="#{jobParameters['masterCollection'] ?: 'northamerica_imports_mn'}" />
+        <property name="parameterKeys">
+            <list>
+                <value>MasterBOLNumber_00</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="arrivalPortMap" class="cn.tendata.batch.support.SpelKeyMapFactoryBean">
+        <property name="resource" 
+            value="${batch.northamerica_imports.arrival_port:classpath:northamerica/imports/arrival_port.json}"/>
+        <property name="keyExpression" value="#root['code']"/>
+    </bean>
+    
+    <bean id="embarkationPortMap" class="cn.tendata.batch.support.SpelKeyMapFactoryBean">
+        <property name="resource" 
+            value="${batch.northamerica_imports.embarkation_port:classpath:northamerica/imports/embarkation_port.json}"/>
+        <property name="keyExpression" value="#root['code']"/>
+    </bean>
+    
+    <bean id="mappingFieldResultMapper" class="cn.tendata.batch.item.mapping.MappingFieldResultMapper">
+        <property name="configOptionsResolver">
+            <bean class="cn.tendata.batch.support.YamlConfigOptionsResolver">
+                <property name="resource" 
+                    value="${batch.northamerica_imports.mapping-config:classpath:northamerica/imports/mapping.yml}"/>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="asyncItemWriter" class="org.springframework.batch.integration.async.AsyncItemWriter">
+        <property name="delegate" ref="writer"/>
+    </bean>
+    
+    <bean id="abstractMongoItemWriter" class="org.springframework.batch.item.data.MongoItemWriter" abstract="true">
+        <property name="template" ref="mongoTemplate"/>
+    </bean>
+
+    <bean id="writer" parent="abstractMongoItemWriter" scope="step">
+        <property name="collection" value="#{jobParameters['destCollection'] ?: 'northamerica_imports'}" />
+    </bean>
+</beans>

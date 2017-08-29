@@ -1,0 +1,31 @@
+- name: date
+  type: DATETIME
+  patterns: ["YYmmdd"]
+  sources: [Actual_Arrival_Date_10]
+#  
+- name: shipper
+  type: STR
+  sources: [Shipper_Name_30]
+#
+- name: shipperAddrs
+  type: STR
+  sources: 
+    - [Shipper_Address_Line_1_30]
+    - [Shipper_Address_Line_2_30]
+    - [Shipper_Address_Line_3_30]
+    - [Shipper_Address_Line_4_30]
+#
+- name: wt
+  type: FLOAT
+  sources: [Weight_10]
+#  
+- name: wtU
+  type: STR
+  defaultValue: 'KG'
+#  
+- name: teu
+  type: FLOAT
+  expression: "#root['Container_Number_60'].length()"
+#
+- name: lloyds
+  type: STR

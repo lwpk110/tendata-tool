@@ -1,0 +1,21 @@
+description = "tendata-batch-common"
+
+dependencies {
+    compile "org.springframework:spring-context"
+    compile "org.springframework:spring-expression"
+    compile "org.springframework.batch:spring-batch-infrastructure"
+    compile "joda-time:joda-time"
+    compile "com.fasterxml.jackson.core:jackson-databind"
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
+    compile "org.apache.avro:avro:${avroVersion}"
+    compile "org.apache.commons:commons-lang3"
+    compile "commons-io:commons-io"
+    compile "commons-logging:commons-logging"
+	
+	runtime "org.hsqldb:hsqldb"
+
+    testCompile "junit:junit"
+    testCompile "org.mockito:mockito-core"
+    testCompile "org.hamcrest:hamcrest-all"
+    testCompile "org.springframework:spring-test"
+}

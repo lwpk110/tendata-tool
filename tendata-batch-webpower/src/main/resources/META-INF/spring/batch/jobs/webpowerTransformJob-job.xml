@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/batch
+        http://www.springframework.org/schema/batch/spring-batch.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+  <job id="webpowerTransformJob" xmlns="http://www.springframework.org/schema/batch" >
+    <step id="webpowerTransformJobStep1">
+      <tasklet >
+        <chunk reader="csvItemReader" processor="csvItemProcessor" writer="csvItemWriter"
+            commit-interval="${batch.northamerica_imports.mongodb.commit-interval:1}"
+            skip-limit="${batch.northamerica_imports.mongodb.skip-limit:1}" >
+          <skippable-exception-classes>
+            <include class="org.springframework.batch.item.file.FlatFileParseException"/>
+          </skippable-exception-classes>
+          <streams>
+            <stream ref="csvItemReader"/>
+          </streams>
+        </chunk>
+      </tasklet>
+    </step>
+    <listeners>
+      <listener ref="notificationExecutionsListener"/>
+    </listeners>
+  </job>
+
+  <bean id="csvItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+    <property name="resource" value="#{T(cn.tendata.batch.util.JobParameterUtils).getInputPathToFile(jobParameters)}"/>
+    <property name="comments" value='"DMDcampaignName","DMDmailingName","DMDtype","email","DMDlogDate","DMDclickName","DMDclickUrl","DMDbounceMessage","DMDipAddress","DMDclient"'/>
+    <property name="lineMapper" ref="defaultLineMapper"/>
+  </bean>
+
+  <bean id="defaultLineMapper" class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+    <property name="lineTokenizer">
+      <bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+        <property name="names" value="DMDcampaignName,DMDmailingName,DMDtype,email,DMDlogDate,DMDclickName,DMDclickUrl,DMDbounceMessage,DMDipAddress,DMDclient"/>
+      </bean>
+    </property>
+    <property name="fieldSetMapper">
+      <bean class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+        <property name="targetType" value="cn.tendata.batch.webpower.item.model.WebpowerCnReportData"/>
+      </bean>
+    </property>
+
+  </bean>
+
+  <bean id="csvItemProcessor" class="cn.tendata.batch.webpower.item.process.WebpowerCsvItemProcessor"/>
+
+  <bean id="csvItemWriter" class="cn.tendata.batch.webpower.item.process.CsvFlatFileItemWriter" scope="step">
+
+    <property name="resource"
+        value="#{T(cn.tendata.batch.util.JobParameterUtils).getOutputPathToFile(jobParameters, '.csv')}"/>
+    <property name="lineAggregator">
+      <bean class="cn.tendata.batch.webpower.item.process.CsvDelimitedLineAggregator">
+        <property name="delimiter" value=","/>
+        <property name="fieldExtractor">
+          <bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+            <property name="names"
+                value="DMDcampaignName,DMDcampaignID,DMDmailingName,DMDmailingID,DMDtype,email,DMDlogDate,DMDclickName,DMDclickUrl,DMDbounceMessage,DMDipAddress,DMDclient"/>
+          </bean>
+        </property>
+      </bean>
+    </property>
+    <property name="comment" value='"DMDcampaignName","DMDcampaignID","DMDmailingName","DMDmailingID","DMDtype","email","DMDlogDate","DMDclickName","DMDclickUrl","DMDbounceMessage","DMDipAddress","DMDclient"'/>
+  </bean>
+</beans>

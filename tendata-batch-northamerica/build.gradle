@@ -1,0 +1,25 @@
+description = "tendata-batch-northamerica"
+
+dependencies {
+    compile project(':tendata-batch-common')
+    compile project(':tendata-batch-hadoop')
+    compile "org.springframework.batch:spring-batch-integration"
+    compile "org.springframework.data:spring-data-mongodb"
+    compile("org.springframework.data:spring-data-hadoop:${springDataHadoopVersion}"){
+         exclude module: "spring-data-hadoop-hbase"
+         exclude module: "spring-data-hadoop-hive"
+         exclude module: "spring-data-hadoop-pig"
+    }
+    compile "com.fasterxml.jackson.core:jackson-databind"
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
+    compile "org.apache.commons:commons-lang3"
+
+    testCompile "junit:junit"
+    testCompile "org.mockito:mockito-core"
+    testCompile "org.hamcrest:hamcrest-all"
+    testCompile "org.springframework:spring-test"
+    testCompile "org.springframework.batch:spring-batch-test"
+    testCompile "log4j:log4j"
+    testCompile "com.github.fakemongo:fongo:${fmongoVersion}"
+    testCompile "org.springframework.data:spring-data-hadoop-test:${springDataHadoopVersion}"
+}

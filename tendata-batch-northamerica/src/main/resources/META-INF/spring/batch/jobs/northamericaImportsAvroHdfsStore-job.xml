@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/batch 
+        http://www.springframework.org/schema/batch/spring-batch.xsd
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+    
+    <import resource="configuration/northamericaImports-common.xml"/>
+    
+    <job id="northamericaImportsAvroHdfsStoreJob" xmlns="http://www.springframework.org/schema/batch">
+        <step id="northamericaImportsAvroHdfsStoreStep1" next="northamericaImportsAvroHdfsStoreStep2">
+            <tasklet>
+                <chunk reader="aggregateItemReader" processor="aggregateItemProcessor" writer="avroFileItemWriter" 
+                    commit-interval="${batch.northamerica_imports.avro.commit-interval:1000}" 
+                    skip-limit="${batch.northamerica_imports.avro.skip-limit:1}">
+                    <skippable-exception-classes>
+                        <include class="org.springframework.batch.item.file.FlatFileParseException"/>
+                    </skippable-exception-classes>
+                    <streams>
+                        <stream ref="fileItemReader"/>
+                    </streams>
+                </chunk>
+            </tasklet>
+        </step>
+        <step id="northamericaImportsAvroHdfsStoreStep2">
+            <tasklet ref="localFileToHdfsTasklet" />
+        </step>
+        <listeners>
+            <listener ref="notificationExecutionsListener"/>
+        </listeners>
+    </job>
+    
+    <bean id="avroFileItemWriter" class="cn.tendata.batch.item.file.avro.GenericAvroFileItemWriter" scope="step">
+        <property name="schema" 
+            value="${batch.northamerica_imports.avro.schema:classpath:northamerica/imports/schema.avsc}"/>
+        <property name="resource" 
+            value="#{T(cn.tendata.batch.util.JobParameterUtils).getOutputPathToFile(jobParameters, '.avro')}" />
+    </bean>
+    
+    <bean id="localFileToHdfsTasklet" class="cn.tendata.batch.northamerica.item.data.hadoop.LocalFileToHdfsTasklet" scope="step">
+        <property name="localSourceFile" 
+            value="#{T(cn.tendata.batch.util.JobParameterUtils).getOutputPathToFile(jobParameters, '.avro')}"/>
+        <property name="rootDir" 
+            value="${batch.northamerica_imports.avro.hdfs.path:/user/tendata/data/original/customs/imports/northamerica/avro}"/>
+        <property name="fsh" ref="hadoopFsShell" />
+    </bean>
+</beans>

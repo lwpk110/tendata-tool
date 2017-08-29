@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+    
+    <bean id="aggregateItemReader" class="cn.tendata.batch.northamerica.item.file.multiline.AggregateItemReader">
+        <property name="delegate">
+            <bean class="org.springframework.batch.item.support.SingleItemPeekableItemReader" >
+                <property name="delegate" ref="fileItemReader" />
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="fileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step" >
+        <property name="resource"
+            value="#{T(cn.tendata.batch.util.JobParameterUtils).getInputPathToFile(jobParameters)}" />
+        <property name="lineMapper">
+            <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+                <property name="lineTokenizer" ref="fixedLengthCompositeLineTokenizer" />
+                <property name="fieldSetMapper">
+                    <bean class="cn.tendata.batch.northamerica.item.file.multiline.AggregateItemFieldSetMapper">
+                        <property name="delegate">
+                            <bean class="org.springframework.batch.item.file.mapping.PassThroughFieldSetMapper" />
+                        </property>
+                        <property name="beginExpression" value="#root.readString(0) == '00'" />
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="fixedLengthCompositeLineTokenizer" class="cn.tendata.batch.northamerica.item.file.multiline.FixedLengthCompositeLineTokenizer">
+        <constructor-arg>
+            <bean class="cn.tendata.batch.support.YamlConfigOptionsResolver">
+                <property name="resource" 
+                    value="${batch.files.northamerica_imports.parse-config:classpath:northamerica/imports/parse.yml}"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="aggregateItemProcessor" class="cn.tendata.batch.northamerica.item.file.multiline.AggregateItemProcessor"/>
+</beans>

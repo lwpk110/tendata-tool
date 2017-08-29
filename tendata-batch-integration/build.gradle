@@ -1,0 +1,16 @@
+description = "tendata-batch-integration"
+
+dependencies {
+    compile project(':tendata-batch-common')
+    compile "org.springframework.batch:spring-batch-integration"
+    compile "org.springframework.integration:spring-integration-file"
+    compile "org.springframework.integration:spring-integration-stream"
+    compile "commons-lang:commons-lang"
+    compile "commons-logging:commons-logging"
+
+    testCompile "junit:junit"
+    testCompile "org.mockito:mockito-core"
+    testCompile "org.hamcrest:hamcrest-all"
+    testCompile "org.springframework:spring-test"
+    testCompile "org.springframework.integration:spring-integration-test"
+}
