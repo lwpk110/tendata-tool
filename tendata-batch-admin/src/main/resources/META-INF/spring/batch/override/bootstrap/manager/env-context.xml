@@ -7,7 +7,6 @@
         <property name="locations">
             <list>
                 <value>classpath:/org/springframework/batch/admin/bootstrap/batch.properties</value>
-                <value>${batch.config.location:classpath:/}batch-default.properties</value>
                 <value>${batch.config.location:classpath:/}batch-${ENVIRONMENT:hsql}.properties</value>
                 <value>${batch.config.location:classpath:/}batch-webpower.properties</value>
             </list>

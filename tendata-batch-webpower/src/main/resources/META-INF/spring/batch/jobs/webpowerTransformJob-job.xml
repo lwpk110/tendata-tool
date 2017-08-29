@@ -28,10 +28,11 @@
     </listeners>
   </job>
 
-  <bean id="csvItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+  <bean id="csvItemReader" class="cn.tendata.batch.webpower.item.process.CsvFlatFileItemReader" scope="step">
     <property name="resource" value="#{T(cn.tendata.batch.util.JobParameterUtils).getInputPathToFile(jobParameters)}"/>
     <property name="comments" value='"DMDcampaignName","DMDmailingName","DMDtype","email","DMDlogDate","DMDclickName","DMDclickUrl","DMDbounceMessage","DMDipAddress","DMDclient"'/>
     <property name="lineMapper" ref="defaultLineMapper"/>
+    <property name="csvItemRecordLineHandler" ref="webpowerCsvItemRecordLineHandler"/>
   </bean>
 
   <bean id="defaultLineMapper" class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
@@ -65,4 +66,6 @@
     </property>
     <property name="comment" value='"DMDcampaignName","DMDcampaignID","DMDmailingName","DMDmailingID","DMDtype","email","DMDlogDate","DMDclickName","DMDclickUrl","DMDbounceMessage","DMDipAddress","DMDclient"'/>
   </bean>
+
+  <bean id="webpowerCsvItemRecordLineHandler" class="cn.tendata.batch.webpower.item.WebpowerCsvItemRecordLineHandler"/>
 </beans>

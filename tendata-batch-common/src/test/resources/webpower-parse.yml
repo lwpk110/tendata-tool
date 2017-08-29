@@ -1,0 +1,14 @@
+- webpowerVersion: webpower_cn
+  comments: ['"DMDcampaignName"','"DMDmailingName"','"DMDtype"','"email"','"DMDlogDate"','"DMDclickName"','"DMDclickUrl"','"DMDbounceMessage"','"DMDipAddress"','"DMDclient"']
+  fields:
+    - dmdCampaignName0
+    - DMDmailingName0
+#---
+#webpower_nld:
+#  comments: ['"DMDcampaignName"','"DMDmailingName"','"DMDtype"','"email"','"DMDlogDate"','"DMDclickName"','"DMDclickUrl"','"DMDbounceMessage"','"DMDipAddress"','"DMDclient"']
+#  fields:
+#    - dmdCampaignName1
+#    - DMDmailingName1
+
+
+

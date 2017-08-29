@@ -3,7 +3,6 @@ group 'cn.tendata.batch'
 dependencies {
     compile project(':tendata-batch-common')
     compile "org.springframework.batch:spring-batch-integration"
-    compile "org.springframework.data:spring-data-mongodb"
 
     compile "com.fasterxml.jackson.core:jackson-databind"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"

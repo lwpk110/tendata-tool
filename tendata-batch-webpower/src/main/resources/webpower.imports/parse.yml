@@ -1,0 +1,5 @@
+webpower_cn:
+  comments: ['"DMDcampaignName"','"DMDmailingName"','"DMDtype"','"email"','"DMDlogDate"','"DMDclickName"','"DMDclickUrl"','"DMDbounceMessage"','"DMDipAddress"','"DMDclient'"']
+  fields:
+    - dmdCampaignName
+    - DMDmailingName
