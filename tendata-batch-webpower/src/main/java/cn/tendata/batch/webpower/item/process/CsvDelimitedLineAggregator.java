@@ -41,8 +41,7 @@ public class CsvDelimitedLineAggregator<T> extends ExtractorLineAggregator<T> {
 	@Override
 	public String doAggregate(Object[] fields) {
 		if(ArrayUtils.isNotEmpty(fields)){
-			List<Object> objectList =
-				Arrays.stream(fields).map(this::convert).collect(Collectors.toList());
+			List<Object> objectList = Arrays.stream(fields).map(this::convert).collect(Collectors.toList());
 			return StringUtils.arrayToDelimitedString(objectList.toArray(), this.delimiter);
 		}
 		return StringUtils.arrayToDelimitedString(fields, this.delimiter);
@@ -57,4 +56,7 @@ public class CsvDelimitedLineAggregator<T> extends ExtractorLineAggregator<T> {
 		return object;
 	}
 
+	public void setQuoteCharacter(char quoteCharacter) {
+		this.quoteCharacter = quoteCharacter;
+	}
 }

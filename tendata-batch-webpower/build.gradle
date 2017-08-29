@@ -1,15 +1,10 @@
-description = "tendata-batch-northamerica"
+group 'cn.tendata.batch'
 
 dependencies {
     compile project(':tendata-batch-common')
-    compile project(':tendata-batch-hadoop')
     compile "org.springframework.batch:spring-batch-integration"
     compile "org.springframework.data:spring-data-mongodb"
-    compile("org.springframework.data:spring-data-hadoop:${springDataHadoopVersion}"){
-         exclude module: "spring-data-hadoop-hbase"
-         exclude module: "spring-data-hadoop-hive"
-         exclude module: "spring-data-hadoop-pig"
-    }
+
     compile "com.fasterxml.jackson.core:jackson-databind"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
     compile "org.apache.commons:commons-lang3"

@@ -17,7 +17,6 @@ description = 'tendata-batch-admin'
 
 dependencies {
     compile project(':tendata-batch-integration')
-    compile project(':tendata-batch-northamerica')
     compile project(':tendata-batch-webpower')
 
     compile "org.springframework.boot:spring-boot-starter-web"
