@@ -9,42 +9,6 @@ public class WebpowerNldReportData {
 
     private static final String formatStr = "yyyy-MM-dd HH:mm:ss";
     /**
-     * webpower 报告 标题注释部分.
-     */
-    public static final String COMMENTS[] = {
-            "\"DMDcampaignName\"",
-            "\"DMDcampaignID\"",
-            "\"DMDmailingName\"",
-            "\"DMDmailingID\"",
-            "\"DMDtype\"",
-            "\"email\"",
-            "\"DMDlogDate\"",
-            "\"DMDclickName\"",
-            "\"DMDclickUrl\"",
-            "\"DMDbounceMessage\"",
-            "\"DMDipAddress\"",
-            "\"DMDclient\""
-    };
-
-    /**
-     * dto class 字符串数组.
-     */
-    public static final String WEBPOWER_REPORTDTO_PARAM[] = {
-            "dmdCampaignName",
-            "dmdCampaignID",
-            "dmdMailingName",
-            "dmdMailingID",
-            "dmdType",
-            "email",
-            "dmdLogDate",
-            "dmdClickName",
-            "dmdClickUrl",
-            "dmdBounceMessage",
-            "dmdIpAddress",
-            "dmdClient"
-    };
-
-    /**
      * 活动名称.
      */
     private String DMDcampaignID;

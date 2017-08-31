@@ -7,7 +7,6 @@
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-
   <job id="webpowerTransformJob" xmlns="http://www.springframework.org/schema/batch" >
     <step id="webpowerTransformJobStep1">
       <tasklet >
@@ -52,7 +51,7 @@
   <bean id="csvItemProcessor" class="cn.tendata.batch.webpower.item.process.WebpowerCsvItemProcessor"/>
 
   <bean id="csvItemWriter" class="cn.tendata.batch.webpower.item.process.CsvFlatFileItemWriter" scope="step">
-    <property name="resource" value="#{T(cn.tendata.batch.util.JobParameterUtils).getOutputPathToFile(jobParameters, '-fixed.csv')}"/>
+    <property name="resource" value="#{T(cn.tendata.batch.util.JobParameterUtils).getOutputPathToFile(jobParameters,true ,'-fixed.csv')}"/>
     <property name="lineAggregator">
       <bean class="cn.tendata.batch.webpower.item.process.CsvDelimitedLineAggregator">
         <property name="delimiter" value=","/>

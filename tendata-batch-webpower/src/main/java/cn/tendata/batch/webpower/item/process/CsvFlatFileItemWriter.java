@@ -380,7 +380,7 @@ public class CsvFlatFileItemWriter<T> extends AbstractItemStreamItemWriter<T> im
             state.setAppendAllowed(append);
             state.setEncoding(encoding);
             try {
-                state.write(StringUtils.arrayToDelimitedString(comment,",") + "\r\n");
+                state.write(StringUtils.arrayToDelimitedString(comment,",") + lineSeparator);
             } catch (IOException e) {
                 e.printStackTrace();
             }

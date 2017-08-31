@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.joda.time.DateTime;
 import org.springframework.util.ResourceUtils;
 
 public abstract class JobParameterUtils {
@@ -25,7 +26,13 @@ public abstract class JobParameterUtils {
     public static String getInputPathToFile(Map<String, Object> jobParameters){
         return (String)jobParameters.get(INPUT_PATH_TO_FILE);
     }
-    
+
+    public static String getOutputPathToFile(Map<String, Object> jobParameters,boolean hasTimeStamp, String extension){
+        if(hasTimeStamp){
+            extension = "-" + new DateTime().toString("yyyyMMddHHmmss")+ extension;
+        }
+        return getOutputPathToFile(jobParameters, extension);
+    }
     public static String getOutputPathToFile(Map<String, Object> jobParameters, String extension){
         return getOutputPathToFile(jobParameters, null, extension);
     }
