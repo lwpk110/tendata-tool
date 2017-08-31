@@ -8,4 +8,5 @@ package cn.tendata.batch.webpower.item;
 public interface CsvItemRecordLineHandler {
 
     String handle(String line);
+
 }
