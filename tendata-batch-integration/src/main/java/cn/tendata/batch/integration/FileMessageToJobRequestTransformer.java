@@ -51,7 +51,7 @@ public class FileMessageToJobRequestTransformer {
         jobParametersBuilder.addString(JobParameterUtils.INPUT_PATH_TO_FILE, 
                 ResourceUtils.FILE_URL_PREFIX + message.getPayload().getAbsolutePath());
         jobParametersBuilder.addString(JobParameterUtils.OUTPUT_PATH_TO_DIR, 
-                ResourceUtils.FILE_URL_PREFIX + FilePathUtils.concatFolders(outputDirectory, relativeFolders).getAbsolutePath());
+                ResourceUtils.FILE_URL_PREFIX + outputDirectory.getAbsolutePath());
         Job job = jobRegistry.getJob(jobProperties.getJobName());
         return new JobLaunchRequest(job, jobParametersBuilder.toJobParameters());
     }
