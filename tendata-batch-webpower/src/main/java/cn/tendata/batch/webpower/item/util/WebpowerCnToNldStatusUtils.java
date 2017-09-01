@@ -7,7 +7,7 @@ package cn.tendata.batch.webpower.item.util;
  */
 public class WebpowerCnToNldStatusUtils {
     /**
-     * webpower 邮件状态字典 v1.0
+     * webpower 邮件状态字典 cn(中国)
      */
     public static final String SENT_SUCCESS_CN = "SENT";
     public static final String OPEN_CN = "OPEN";
@@ -20,7 +20,7 @@ public class WebpowerCnToNldStatusUtils {
     public static final String SPAM_COMPLAINT_CN = "SPAMCOMPLAINT";
 
     /**
-     * webpower 邮件状态字典 v1.1
+     * webpower 邮件状态字典 nld（荷兰）
      */
     public static final String SENT_SUCCESS = "SENDOUT";
     public static final String OPEN = "OPEN";
