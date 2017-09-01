@@ -27,13 +27,12 @@ public class WebpowerCsvItemRecordLineHandler implements CsvItemRecordLineHandle
         String cleanLine = line.replaceAll(ignoreCharacter,"");
 
         int CharacterPositionAsc = RegexUtil.getCharacterPosition(delimiter,cleanLine,7);
-        int characterPositionDesc = RegexUtil.getCharacterPositionFromLast(delimiter,line, 1);
-        String midleDesc = line.substring(CharacterPositionAsc +1, characterPositionDesc -1);
-
+        int characterPositionDesc = RegexUtil.getCharacterPositionFromLast(delimiter,cleanLine, 1);
+        String midleDesc = cleanLine.substring(CharacterPositionAsc +1, characterPositionDesc -1);
         if(StringUtils.hasText(midleDesc)){
-            String front = line.substring(0, CharacterPositionAsc +1);
-            String end = line.substring(characterPositionDesc -1);
-            return front + midleDesc + end;
+            String front = cleanLine.substring(0, CharacterPositionAsc +1);
+            String end = cleanLine.substring(characterPositionDesc -1);
+            return front + midleDesc.replaceAll(",",".") + end;
         }
         return cleanLine;
     }
