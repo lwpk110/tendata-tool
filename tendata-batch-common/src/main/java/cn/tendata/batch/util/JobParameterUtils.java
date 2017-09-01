@@ -29,7 +29,7 @@ public abstract class JobParameterUtils {
 
     public static String getOutputPathToFile(Map<String, Object> jobParameters,boolean hasTimeStamp, String extension){
         if(hasTimeStamp){
-            extension = "-" + new DateTime().toString("yyyyMMddHHmmss")+ extension;
+            extension = "-" + new DateTime().toString("yyyyMMdd")+ extension;
         }
         return getOutputPathToFile(jobParameters, extension);
     }

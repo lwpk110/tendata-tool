@@ -1,5 +1,7 @@
 package cn.tendata.batch.webpower.item.model;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
@@ -10,7 +12,11 @@ import org.joda.time.format.DateTimeFormat;
  */
 public class WebpowerCnReportData {
 
-    private static final String formatStr = "yyyy-MM-dd HH:mm:ss";
+    Pattern dmdLogDatePattern1 = Pattern.compile("^[1-9]\\d{3}/([1-9]|0[1-9]|1[0-2])/([1-9]|0[1-9]|[1-2][0-9]|3[0-1])\\s+(\\d|20|21|22|23|[0-1]\\d):(\\d|[0-5]\\d)$");
+    Pattern dmdLogDatePattern2 = Pattern.compile("^[1-9]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])\\s+(20|21|22|23|[0-1]\\d):[0-5]\\d:[0-5]\\d$");
+
+    private static final String formatStr_1 = "yyyy/MM/dd HH:mm";
+    private static final String formatStr_2 = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * 活动名称.
@@ -136,8 +142,15 @@ public class WebpowerCnReportData {
     }
 
     private DateTime formatToDateTime(String dateStr) {
-        return DateTimeFormat
-            .forPattern(formatStr)
-            .parseDateTime(dateStr);
+        Matcher matcher1 = dmdLogDatePattern1.matcher(dateStr);
+        if(matcher1.matches()){
+            return DateTimeFormat
+                .forPattern(formatStr_1)
+                .parseDateTime(dateStr);
+        }else{
+            return DateTimeFormat
+                .forPattern(formatStr_2)
+                .parseDateTime(dateStr);
+        }
     }
 }

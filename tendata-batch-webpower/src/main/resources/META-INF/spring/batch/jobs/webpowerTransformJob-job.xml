@@ -29,7 +29,7 @@
 
   <bean id="csvItemReader" class="cn.tendata.batch.webpower.item.process.CsvFlatFileItemReader" scope="step">
     <property name="resource" value="#{T(cn.tendata.batch.util.JobParameterUtils).getInputPathToFile(jobParameters)}"/>
-    <property name="comments" value='"DMDcampaignName","DMDmailingName","DMDtype","email","DMDlogDate","DMDclickName","DMDclickUrl","DMDbounceMessage","DMDipAddress","DMDclient"'/>
+    <property name="comments" value='DMDcampaignName,DMDmailingName,DMDtype,email,DMDlogDate,DMDclickName,DMDclickUrl,DMDbounceMessage,DMDipAddress,DMDclient'/>
     <property name="lineMapper" ref="defaultLineMapper"/>
     <property name="csvItemRecordLineHandler" ref="webpowerCsvItemRecordLineHandler"/>
   </bean>
