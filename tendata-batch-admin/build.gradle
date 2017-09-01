@@ -13,7 +13,7 @@ springBoot {
     executable = true
 }
 
-description = 'tendata-batch-admin'
+description = 'tendata-tool-admin'
 
 dependencies {
     compile project(':tendata-batch-integration')

@@ -13,6 +13,7 @@ public class WebpowerCnToNldStatusUtils {
     public static final String OPEN_CN = "OPEN";
     public static final String CLICK_CN = "CLICK";
     public static final String UN_SUBSCRIBE_CN = "UNSUBSCRIBE";
+    public static final String SOFT_BOUNCE_CN = "SOFTBOUNCE";
     public static final String SOFT_BOUNCE_1X_CN = "SOFTBOUNCE 1X";
     public static final String SOFT_BOUNCE_2X_CN = "SOFTBOUNCE 2X";
     public static final String SOFT_BOUNCE_FINAL_CN = "SOFTBOUNCE FINAL";
@@ -42,6 +43,8 @@ public class WebpowerCnToNldStatusUtils {
                 return CLICK;
             case UN_SUBSCRIBE_CN:
                 return UN_SUBSCRIBE;
+            case SOFT_BOUNCE_CN:
+                return SOFT_BOUNCE_1X;
             case SOFT_BOUNCE_1X_CN:
                 return SOFT_BOUNCE_1X;
             case SOFT_BOUNCE_2X_CN:
@@ -52,8 +55,8 @@ public class WebpowerCnToNldStatusUtils {
                 return HARD_BOUNCE_FINAL;
             case SPAM_COMPLAINT_CN:
                 return SPAM_COMPLAINT;
-             default:
-                 return null;
+            default:
+                return null;
         }
     }
 }
