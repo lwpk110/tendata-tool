@@ -2,6 +2,8 @@ package cn.tendata.batch.integration;
 
 import java.io.File;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.configuration.JobRegistry;
@@ -17,6 +19,7 @@ import cn.tendata.batch.integration.util.FilePathUtils;
 import cn.tendata.batch.util.JobParameterUtils;
 
 public class FileMessageToJobRequestTransformer {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private JobRegistry jobRegistry;
     private FileMessageJobPropertiesResolver jobPropertiesResolver;
@@ -43,7 +46,11 @@ public class FileMessageToJobRequestTransformer {
     @Transformer
     public JobLaunchRequest toRequest(Message<File> message) throws NoSuchJobException {
         String[] relativeFolders = FilePathUtils.getRelativeFolders(inputDirectory, message.getPayload());
+        logger.info("---->：input directory:{}, message payload:{}",inputDirectory.getAbsoluteFile(), message.getPayload().getAbsoluteFile());
+        logger.info("---->：relativeFolders:{},first elements:{}",relativeFolders.toString(), relativeFolders[0]);
         FileMessageJobProperties jobProperties = jobPropertiesResolver.resolve(getJobKey(relativeFolders));
+        logger.info("---->：jobProperties job Name:{}",jobProperties.getJobName() );
+
         if(jobProperties == null){
             throw new IllegalStateException("Job properties is not found, file:" + message.getPayload());
         }
